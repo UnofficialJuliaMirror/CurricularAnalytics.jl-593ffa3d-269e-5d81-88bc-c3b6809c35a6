@@ -1,7 +1,8 @@
 # file: DegreePlanCreation.jl
 function create_degree_plan(curric::Curriculum, create_terms::Function=bin_packing, name::AbstractString="", additional_courses::Array{Course}=Array{Course,1}();
-    min_terms::Int=1, max_terms::Int=8, min_credits_per_term::Int=3, max_credits_per_term::Int=19)
-    terms =  create_terms(curric, additional_courses; min_terms=min_terms, max_terms=max_terms, min_credits_per_term=min_credits_per_term,
+                            min_terms::Int=1, max_terms::Int=8, min_credits_per_term::Int=3, max_credits_per_term::Int=19)
+
+    terms = create_terms(curric, additional_courses; min_terms=min_terms, max_terms=max_terms, min_credits_per_term=min_credits_per_term,
                                 max_credits_per_term=max_credits_per_term)
     if terms == false
         println("Unable to create degree plan")
@@ -107,6 +108,7 @@ function bin_packing(curric::Curriculum, additional_courses::Array{Course}=Array
 end
 
 function create_terms(curric::Curriculum; term_count::Int, min_credits_per_term::Int=5, max_credits_per_term::Int=19)
+    println("testing...")
     if !("complexity" in keys(curric.metrics))
         complexity(curric)
     end
@@ -159,12 +161,14 @@ function create_terms(curric::Curriculum; term_count::Int, min_credits_per_term:
                 push!(all_applied_courses, course) 
             end
         else
+            println("curric_total_credit error")
             return nothing, false
         end
     end
     if length(all_applied_courses) == length(sorted_index)
         return terms, true
     else
+        println("applied courses error: $(length(all_applied_courses))")
         return nothing, false
     end    
 end
@@ -211,6 +215,7 @@ end
 
 function bin_packing2(curric::Curriculum, additional_courses::Array{Course}=Array{Course,1}(); 
         min_terms::Int=1, max_terms::Int=8, min_credits_per_term::Int=3, max_credits_per_term::Int=19)
+        
     control, terms, min_term_count = find_min_terms(curric, additional_courses; min_terms = min_terms,max_terms = max_terms, min_credits_per_term = min_credits_per_term, max_credits_per_term = max_credits_per_term)
     if control
         control_balance, terms, max_credit = balance_terms(curric, additional_courses;
